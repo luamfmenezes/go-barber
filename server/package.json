@@ -9,6 +9,7 @@
         "body-parser": "^1.19.0",
         "date-fns": "^2.13.0",
         "express": "^4.17.1",
+        "express-async-errors": "^3.1.1",
         "jsonwebtoken": "^8.5.1",
         "multer": "^1.4.2",
         "pg": "^8.2.0",
@@ -17,7 +18,7 @@
     },
     "scripts": {
         "build": "yarn tsc",
-        "dev:server": "ts-node-dev --transpileOnly --ignore-watch node_modules src/server.ts",
+        "dev:server": "ts-node-dev -r tsconfig-paths/register --transpileOnly --ignore-watch node_modules src/shared/infra/http/server.ts",
         "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config ./ormconfig.json"
     },
     "devDependencies": {
