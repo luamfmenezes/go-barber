@@ -5,6 +5,7 @@ import { sign } from 'jsonwebtoken';
 import authConfig from '@config/auth';
 import AppError from '@shared/errors/AppError';
 import IUserRepostirotory from '@modules/users/repositories/IUserRepostirotory';
+import { injectable, inject } from 'tsyringe';
 
 interface Request {
     email: string;
@@ -15,9 +16,12 @@ interface Response {
     user: User;
     token: string;
 }
-
+@injectable()
 class CreateAppointmentService {
-    constructor(private usersRepository: IUserRepostirotory) {}
+    constructor(
+        @inject('UserRepository')
+        private usersRepository: IUserRepostirotory,
+    ) {}
 
     public async execute({ email, password }: Request): Promise<Response> {
         const user = await this.usersRepository.findByEmail(email);
