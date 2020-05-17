@@ -3,6 +3,7 @@ import Appointment from '@modules/appointments/infra/typeorm/entities/Appointmen
 import { injectable, inject } from 'tsyringe';
 import AppError from '@shared/errors/AppError';
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
+import 'reflect-metadata';
 
 interface IRequest {
     provider_id: string;
