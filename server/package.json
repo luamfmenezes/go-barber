@@ -4,8 +4,13 @@
     "main": "index.js",
     "license": "MIT",
     "dependencies": {
+        "@types/jsonwebtoken": "^8.5.0",
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.19.0",
         "date-fns": "^2.13.0",
         "express": "^4.17.1",
+        "jsonwebtoken": "^8.5.1",
+        "multer": "^1.4.2",
         "pg": "^8.2.0",
         "reflect-metadata": "^0.1.13",
         "typeorm": "^0.2.24"
@@ -16,7 +21,9 @@
         "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --config ./ormconfig.json"
     },
     "devDependencies": {
+        "@types/bcryptjs": "^2.4.2",
         "@types/express": "^4.17.6",
+        "@types/multer": "^1.4.3",
         "@typescript-eslint/eslint-plugin": "^2.33.0",
         "eslint": "5.16.0",
         "eslint-config-airbnb-base": "^14.1.0",

@@ -4,22 +4,23 @@ module.exports = {
         node: true,
     },
     extends: [
-        "airbnb-base",
-        "plugin:@typescript-eslint/recommended",
-        "prettier/@typescript-eslint",
-        "plugin:prettier/recommended",
+        'airbnb-base',
+        'plugin:@typescript-eslint/recommended',
+        'prettier/@typescript-eslint',
+        'plugin:prettier/recommended',
     ],
     globals: {
-        Atomics: "readonly",
-        SharedArrayBuffer: "readonly",
+        Atomics: 'readonly',
+        SharedArrayBuffer: 'readonly',
     },
-    parser: "@typescript-eslint/parser",
+    parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 11,
-        sourceType: "module",
+        sourceType: 'module',
     },
-    plugins: ["@typescript-eslint", "prettier"],
+    plugins: ['@typescript-eslint', 'prettier'],
     rules: {
-        "prettier/prettier": "error",
+        '@typescript-eslint/camelcase': 'off',
+        'prettier/prettier': 'error',
     },
 };
