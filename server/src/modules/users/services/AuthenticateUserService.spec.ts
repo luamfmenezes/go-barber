@@ -46,7 +46,7 @@ describe('CreateUserService', () => {
             password: 'adminadmin',
         });
 
-        expect(user).rejects.toBeInstanceOf(AppError);
+        await expect(user).rejects.toBeInstanceOf(AppError);
     });
 
     it('should not be possible authenticate with a wrong password', async () => {
@@ -73,6 +73,6 @@ describe('CreateUserService', () => {
             password: 'wrong-password',
         });
 
-        expect(user).rejects.toBeInstanceOf(AppError);
+        await expect(user).rejects.toBeInstanceOf(AppError);
     });
 });

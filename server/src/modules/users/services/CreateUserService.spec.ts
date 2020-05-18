@@ -48,6 +48,6 @@ describe('CreateUserService', () => {
             phone: '53981145179',
         });
 
-        expect(user).rejects.toBeInstanceOf(AppError);
+        await expect(user).rejects.toBeInstanceOf(AppError);
     });
 });

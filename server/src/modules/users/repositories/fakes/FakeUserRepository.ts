@@ -3,7 +3,7 @@ import User from '@modules/users/infra/typeorm/entities/User';
 import IUserRepostirotory from '@modules/users/repositories/IUserRepostirotory';
 import ICreateUserDTO from '@modules/users/dtos/ICreateUserDTO';
 
-class UserRepository implements IUserRepostirotory {
+class FakeUserRepository implements IUserRepostirotory {
     private users: User[] = [];
 
     public async findById(id: string): Promise<User | undefined> {
@@ -31,4 +31,4 @@ class UserRepository implements IUserRepostirotory {
     }
 }
 
-export default UserRepository;
+export default FakeUserRepository;

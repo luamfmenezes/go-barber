@@ -36,6 +36,6 @@ describe('CreateAppointmentService', () => {
             provider_id: '3123908129389012',
         });
 
-        expect(appointmentWithTheSameDate).rejects.toBeInstanceOf(AppError);
+        await expect(appointmentWithTheSameDate).rejects.toBeInstanceOf(AppError);
     });
 });
