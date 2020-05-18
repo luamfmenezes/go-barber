@@ -27,9 +27,9 @@ class SendForgotPasswordEmailService {
             throw new AppError('This email is not from an user.');
         }
 
-        await this.userTokenRepository.generateToken(user.id);
+        const { token } = await this.userTokenRepository.generateToken(user.id);
 
-        this.mailProvider.sendMail(email, 'Recover password');
+        await this.mailProvider.sendMail(email, `Recover password: ${token}`);
     }
 }
 
