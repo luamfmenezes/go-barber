@@ -4,19 +4,26 @@ import CreateUserService from './CreateUserService';
 import FakeUserRepository from '@modules/users/repositories/fakes/FakeUserRepository';
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 
-describe('CreateUserService', () => {
-    it('should be possible authenticate with valid credentials', async () => {
-        const fakeUserRepository = new FakeUserRepository();
-        const fakeHashProvider = new FakeHashProvider();
-        const createUserService = new CreateUserService(
-            fakeUserRepository,
-            fakeHashProvider,
-        );
-        const authenticateUserService = new AuthenticateUserService(
-            fakeUserRepository,
-            fakeHashProvider,
-        );
+let fakeUserRepository: FakeUserRepository;
+let fakeHashProvider: FakeHashProvider;
+let createUserService: CreateUserService;
+let authenticateUserService: AuthenticateUserService;
 
+describe('CreateUserService', () => {
+    beforeEach(() => {
+        fakeUserRepository = new FakeUserRepository();
+        fakeHashProvider = new FakeHashProvider();
+        createUserService = new CreateUserService(
+            fakeUserRepository,
+            fakeHashProvider,
+        );
+        authenticateUserService = new AuthenticateUserService(
+            fakeUserRepository,
+            fakeHashProvider,
+        );
+    });
+
+    it('should be possible authenticate with valid credentials', async () => {
         await createUserService.execute({
             email: 'luamfmenezes@gmail.com',
             password: 'adminadmin',
@@ -34,13 +41,6 @@ describe('CreateUserService', () => {
     });
 
     it('should not be possible authenticate with non existing user', async () => {
-        const fakeUserRepository = new FakeUserRepository();
-        const fakeHashProvider = new FakeHashProvider();
-        const authenticateUserService = new AuthenticateUserService(
-            fakeUserRepository,
-            fakeHashProvider,
-        );
-
         const user = authenticateUserService.execute({
             email: 'luamfmenezes@gmail.com',
             password: 'adminadmin',
@@ -50,17 +50,6 @@ describe('CreateUserService', () => {
     });
 
     it('should not be possible authenticate with a wrong password', async () => {
-        const fakeUserRepository = new FakeUserRepository();
-        const fakeHashProvider = new FakeHashProvider();
-        const createUserService = new CreateUserService(
-            fakeUserRepository,
-            fakeHashProvider,
-        );
-        const authenticateUserService = new AuthenticateUserService(
-            fakeUserRepository,
-            fakeHashProvider,
-        );
-
         await createUserService.execute({
             email: 'luamfmenezes@gmail.com',
             password: 'adminadmin',

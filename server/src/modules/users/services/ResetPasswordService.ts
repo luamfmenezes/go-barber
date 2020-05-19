@@ -44,7 +44,7 @@ class ResetPasswordService {
 
         user.password = await this.hashProvider.generateHash(password);
 
-        this.usersRepository.save(user);
+    this.usersRepository.save(user);
     }
 }
 
