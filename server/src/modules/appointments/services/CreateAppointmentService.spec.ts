@@ -1,15 +1,19 @@
 import AppError from '@shared/errors/AppError';
 import CreateAppointmentService from './CreateAppointmentService';
 import FakeAppointmentRepository from '@modules/appointments/repositories/fakes/FakeAppointmentsRepository';
+import FakeNotificationsRepository from '@modules/notifications/repositories/fakes/FakeNotificationsRepository';
 
 let fakeAppointmentRepository: FakeAppointmentRepository;
+let fakeNotificationsRepository: FakeNotificationsRepository;
 let createAppointmentService: CreateAppointmentService;
 
 describe('CreateAppointmentService', () => {
     beforeEach(() => {
         fakeAppointmentRepository = new FakeAppointmentRepository();
+        fakeNotificationsRepository = new FakeNotificationsRepository();
         createAppointmentService = new CreateAppointmentService(
             fakeAppointmentRepository,
+            fakeNotificationsRepository,
         );
     });
 
@@ -107,6 +111,29 @@ describe('CreateAppointmentService', () => {
 
         await expect(tryCreateAppointmentAfter5pm).rejects.toBeInstanceOf(
             AppError,
+        );
+    });
+
+    it('should send a notification when a appointment is created', async () => {
+        const spyCreateNotification = jest.spyOn(
+            fakeNotificationsRepository,
+            'create',
+        );
+
+        jest.spyOn(Date, 'now').mockImplementation(() => {
+            return new Date(2020, 4, 10, 12).getTime();
+        });
+
+        await createAppointmentService.execute({
+            date: new Date(2020, 4, 15, 13),
+            provider_id: 'provider',
+            user_id: 'user',
+        });
+
+        expect(spyCreateNotification).toBeCalledWith(
+            expect.objectContaining({
+                recipient_id: 'provider',
+            }),
         );
     });
 });

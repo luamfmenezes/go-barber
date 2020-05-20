@@ -3,8 +3,8 @@ import Appointment from '@modules/appointments/infra/typeorm/entities/Appointmen
 import { injectable, inject } from 'tsyringe';
 import AppError from '@shared/errors/AppError';
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
-import { isBefore, getHours } from 'date-fns';
-// import 'reflect-metadata';
+import { isBefore, getHours, format } from 'date-fns';
+import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
 
 interface IRequest {
     provider_id: string;
@@ -17,6 +17,8 @@ class CreateAppointmentService {
     constructor(
         @inject('AppointmentsRepository')
         private appointmentsRepository: IAppointmentsRepository,
+        @inject('NotificationsRepository')
+        private notificationsRepository: INotificationsRepository,
     ) {}
 
     public async execute({
@@ -39,14 +41,16 @@ class CreateAppointmentService {
         }
 
         if (user_id === provider_id) {
-            throw new AppError('You can not create an appointment with yourself.');
+            throw new AppError(
+                'You can not create an appointment with yourself.',
+            );
         }
 
-        if(getHours(appointmentDate) > 17){
+        if (getHours(appointmentDate) > 17) {
             throw new AppError('You can not create an appointment after 17pm.');
         }
 
-        if(getHours(appointmentDate) < 8){
+        if (getHours(appointmentDate) < 8) {
             throw new AppError('You can not create an appointment before 8am.');
         }
 
@@ -54,6 +58,13 @@ class CreateAppointmentService {
             provider_id,
             date: appointmentDate,
             user_id,
+        });
+
+        const dateFormated = format(appointmentDate, "dd/MM/yyyy 'at' hh:mma");
+
+        await this.notificationsRepository.create({
+            recipient_id: provider_id,
+            content: `New schedule to ${dateFormated}`,
         });
 
         return appointment;

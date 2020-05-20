@@ -1,18 +1,18 @@
 import { Router } from 'express';
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 import AppointmentController from '@modules/appointments/infra/http/controllers/AppointmentsController';
-import ProviderMonthAvailabilityController from '@modules/appointments/infra/http/controllers/ProviderMonthAvailabilityController';
-import ProviderDayAvailabilityController from '@modules/appointments/infra/http/controllers/ProviderDayAvailabilityController';
+import ProviderAppointmentsController from '@modules/appointments/infra/http/controllers/ProviderAppointmentsController';
 const appointmentsRoutes = Router();
 
 const appointmentsController = new AppointmentController();
-const providerMonthAvailabilityController = new ProviderMonthAvailabilityController();
-const providerDayAvailabilityController = new ProviderDayAvailabilityController();
+const providerAppointmentsController = new ProviderAppointmentsController();
 
 appointmentsRoutes.use(ensureAuthenticated);
 
 appointmentsRoutes.post('/', appointmentsController.create);
-appointmentsRoutes.get('/:provider_id/month-availability', providerMonthAvailabilityController.index);
-appointmentsRoutes.get('/:provider_id/day-availability', providerDayAvailabilityController.index);
+appointmentsRoutes.get('/', providerAppointmentsController.index);
 
 export default appointmentsRoutes;
+
+
+// Luam change the route to provider
