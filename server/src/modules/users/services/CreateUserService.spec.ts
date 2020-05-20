@@ -32,6 +32,14 @@ describe('CreateUserService', () => {
     });
 
     it('should not be possible to create a new user with an already used email', async () => {
+        const fakeUserRepository = new FakeUserRepository();
+        const fakeHashProvider = new FakeHashProvider();
+
+        const createUserService = new CreateUserService(
+            fakeUserRepository,
+            fakeHashProvider,
+        );
+
         await createUserService.execute({
             name: 'Luam menezes',
             email: 'luamfmenezes@gmail.com',
