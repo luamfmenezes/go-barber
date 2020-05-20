@@ -10,6 +10,8 @@ class AppointementsController {
     ): Promise<Response> {
         const { provider_id, date } = request.body;
 
+        const user_id = request.user.id;
+
         const parseDate = parseISO(date);
 
         const createAppointment = container.resolve(CreateAppointmentService);
@@ -17,9 +19,10 @@ class AppointementsController {
         const appointment = await createAppointment.execute({
             date: parseDate,
             provider_id,
+            user_id,
         });
 
-        return response.json({ appointment });
+        return response.json(appointment);
     }
 }
 
