@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
-import { getDaysInMonth, getDate } from 'date-fns';
+import { getDaysInMonth, getDate, isAfter } from 'date-fns';
 
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 
@@ -44,6 +44,8 @@ class ListProviderMounthsAvailability {
         );
 
         const availability = eachDayOfMonth.map(day => {
+            const compareDate = new Date(year, month - 1, day, 23, 59, 59);
+
             const appointmentsInDay = appointmentsInMonth.filter(
                 appointment => {
                     return getDate(appointment.date) === day;
@@ -52,7 +54,9 @@ class ListProviderMounthsAvailability {
 
             return {
                 day,
-                available: appointmentsInDay.length < 10,
+                available:
+                    isAfter(new Date(), compareDate) &&
+                    appointmentsInDay.length < 10,
             };
         });
 
