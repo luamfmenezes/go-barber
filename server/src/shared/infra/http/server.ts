@@ -7,11 +7,14 @@ import routes from './routes';
 import bodyParser from 'body-parser';
 import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
+import raterLimiter from '@shared/infra/http/middlewares/rateLimiter';
 
 import '@shared/infra/typeorm';
 import '@shared/container';
 
 const app = express();
+
+app.use(raterLimiter);
 
 app.use(bodyParser.json());
 
