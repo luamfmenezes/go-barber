@@ -2,18 +2,22 @@ import AppError from '@shared/errors/AppError';
 import CreateUserService from './CreateUserService';
 import FakeUserRepository from '@modules/users/repositories/fakes/FakeUserRepository';
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
+import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 
 let fakeUserRepository: FakeUserRepository;
 let fakeHashProvider: FakeHashProvider;
 let createUserService: CreateUserService;
+let fakeCacheProvider: FakeCacheProvider;
 
 describe('CreateUserService', () => {
     beforeEach(() => {
         fakeUserRepository = new FakeUserRepository();
         fakeHashProvider = new FakeHashProvider();
+        fakeCacheProvider = new FakeCacheProvider();
         createUserService = new CreateUserService(
             fakeUserRepository,
             fakeHashProvider,
+            fakeCacheProvider,
         );
     });
 
@@ -32,14 +36,6 @@ describe('CreateUserService', () => {
     });
 
     it('should not be possible to create a new user with an already used email', async () => {
-        const fakeUserRepository = new FakeUserRepository();
-        const fakeHashProvider = new FakeHashProvider();
-
-        const createUserService = new CreateUserService(
-            fakeUserRepository,
-            fakeHashProvider,
-        );
-
         await createUserService.execute({
             name: 'Luam menezes',
             email: 'luamfmenezes@gmail.com',

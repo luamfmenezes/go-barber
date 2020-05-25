@@ -5,6 +5,7 @@ import AppError from '@shared/errors/AppError';
 import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 import { isBefore, getHours, format } from 'date-fns';
 import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 
 interface IRequest {
     provider_id: string;
@@ -19,6 +20,8 @@ class CreateAppointmentService {
         private appointmentsRepository: IAppointmentsRepository,
         @inject('NotificationsRepository')
         private notificationsRepository: INotificationsRepository,
+        @inject('CacheProvider')
+        private cacheProvider: ICacheProvider,
     ) {}
 
     public async execute({
@@ -60,6 +63,13 @@ class CreateAppointmentService {
             date: appointmentDate,
             user_id,
         });
+
+        const appointmentCacheKey = `provider-appointment:${provider_id}:${format(
+            date,
+            'yyyy-M-d',
+        )}`;
+
+        await this.cacheProvider.invalidate(appointmentCacheKey);
 
         const dateFormated = format(appointmentDate, "dd/MM/yyyy 'at' hh:mma");
 

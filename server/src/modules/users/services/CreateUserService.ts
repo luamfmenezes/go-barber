@@ -4,6 +4,7 @@ import AppError from '@shared/errors/AppError';
 import IUserRepostirotory from '@modules/users/repositories/IUserRepostirotory';
 import { injectable, inject } from 'tsyringe';
 import IHashProvider from '@modules/users/providers/HashProvider/models/IHashProvider';
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 
 interface Request {
     name: string;
@@ -19,6 +20,8 @@ class CreateUserService {
         private usersRepository: IUserRepostirotory,
         @inject('HashProvider')
         private hashProvider: IHashProvider,
+        @inject('CacheProvider')
+        private cacheProvider: ICacheProvider,
     ) {}
 
     public async execute({
@@ -41,6 +44,8 @@ class CreateUserService {
             password: hashedPassword,
             phone,
         });
+
+        await this.cacheProvider.invalidatePrefix('provider-list');
 
         return user;
     }

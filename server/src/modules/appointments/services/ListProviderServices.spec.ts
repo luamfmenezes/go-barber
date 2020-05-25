@@ -2,14 +2,20 @@ import AppError from '@shared/errors/AppError';
 import FakeUserRepository from '@modules/users/repositories/fakes/FakeUserRepository';
 import ListProviderServices from './ListProviderServices';
 import { uuid } from 'uuidv4';
+import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 
+let fakeCacheProvider: FakeCacheProvider;
 let fakeUserRepository: FakeUserRepository;
 let listProviderServices: ListProviderServices;
 
 describe('ListProviderService', () => {
     beforeEach(() => {
         fakeUserRepository = new FakeUserRepository();
-        listProviderServices = new ListProviderServices(fakeUserRepository);
+        fakeCacheProvider = new FakeCacheProvider();
+        listProviderServices = new ListProviderServices(
+            fakeUserRepository,
+            fakeCacheProvider,
+        );
     });
 
     it('should be able to detail an user', async () => {

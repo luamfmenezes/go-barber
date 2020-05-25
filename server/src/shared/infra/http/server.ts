@@ -13,7 +13,6 @@ import '@shared/container';
 
 const app = express();
 
-
 app.use(bodyParser.json());
 
 app.use('/files', express.static(uploadConfig.directory));

@@ -1,5 +1,6 @@
 import { inject, injectable } from 'tsyringe';
 import IUserRepostirotory from '@modules/users/repositories/IUserRepostirotory';
+import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
 
@@ -12,14 +13,27 @@ class ListProviderService {
     constructor(
         @inject('UserRepository')
         private userRepository: IUserRepostirotory,
+        @inject('CacheProvider')
+        private cacheProvider: ICacheProvider,
     ) {}
 
     public async execute({ user_id }: IRequest): Promise<User[]> {
-        const users = await this.userRepository.findAllProviders({
-            except_user_id: user_id,
-        });
+        let providers = await this.cacheProvider.recover<User[]>(
+            `provider-list:${user_id}`,
+        );
 
-        return users;
+        if (!providers) {
+            providers = await this.userRepository.findAllProviders({
+                except_user_id: user_id,
+            });
+
+            await this.cacheProvider.save(
+                `provider-list:${user_id}`,
+                providers,
+            );
+        }
+
+        return providers;
     }
 }
 
