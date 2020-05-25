@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import 'dotenv/config';
 import { errors } from 'celebrate';
 import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
 import 'express-async-errors';
 import routes from './routes';
 import bodyParser from 'body-parser';
@@ -13,6 +14,8 @@ import '@shared/infra/typeorm';
 import '@shared/container';
 
 const app = express();
+
+app.use(cors());
 
 app.use(raterLimiter);
 
