@@ -5,20 +5,29 @@ import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
 import * as Yup from 'yup';
-
+import { useAuth } from '../../hooks/Auth';
 import formatValidationErros from '../../utils/formatValidationErrors';
+import { useToast } from '../../hooks/Toast';
 
 interface ICredentials {
+    email: string;
+    password: string;
+}
+
+interface ICredentialError {
     email?: string;
     password?: string;
 }
 
 const SignIn: React.FC = () => {
+    const { signIn } = useAuth();
+    const { addToast } = useToast();
+
     const [credentials, setCredentials] = useState<ICredentials>({
         email: '',
         password: '',
     });
-    const [errorFields, setErrorFields] = useState<ICredentials>({});
+    const [errorFields, setErrorFields] = useState<ICredentialError>({});
 
     const handleInputCredentials = useCallback(
         (event, fieldName) => {
@@ -42,9 +51,20 @@ const SignIn: React.FC = () => {
                 await schemaCredentitials.validate(credentials, {
                     abortEarly: false,
                 });
+
+                await signIn(credentials);
             } catch (err) {
-                const errors = formatValidationErros(err);
-                setErrorFields(errors);
+                console.log('error');
+                if (err instanceof Yup.ValidationError) {
+                    const errors = formatValidationErros(err);
+                    setErrorFields(errors);
+                } else {
+                    addToast({
+                        type: 'error',
+                        description: 'Invalid credentials',
+                        title: 'Login Error',
+                    });
+                }
             }
         },
         [credentials, errorFields],
