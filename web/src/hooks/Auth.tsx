@@ -1,8 +1,15 @@
 import React, { createContext, useCallback, useState, useContext } from 'react';
 import api from '../services/api';
 
+interface User {
+    id: string;
+    avatar_url: string;
+    name: string;
+    email: string;
+}
+
 interface IAuthState {
-    user: object;
+    user: User;
     token: string;
 }
 
@@ -12,8 +19,9 @@ interface ICredentials {
 }
 
 interface IAuthContext {
-    user: object;
+    user: User;
     signIn(credentials: ICredentials): Promise<void>;
+    signOut(): void;
 }
 
 const AuthContext = createContext<IAuthContext>({} as IAuthContext);
@@ -24,8 +32,10 @@ const AuthProvider: React.FC = ({ children }) => {
         const user = localStorage.getItem('@GoBarber:user');
 
         if (user && token) {
+            api.defaults.headers.authorization = `bearer ${token}`;
             return { user: JSON.parse(user), token };
         }
+
         return {} as IAuthState;
     });
 
@@ -35,17 +45,20 @@ const AuthProvider: React.FC = ({ children }) => {
 
         localStorage.setItem('@GoBarber:token', token);
         localStorage.setItem('@GoBarber:user', JSON.stringify(user));
+
+        api.defaults.headers.authorization = `bearer ${token}`;
+
         setData({ token, user });
     }, []);
 
-    const signOut = useCallback(async ({ email, password }) => {
+    const signOut = useCallback(async () => {
         localStorage.removeItem('@GoBarber:token');
         localStorage.removeItem('@GoBarber:user');
         setData({} as IAuthState);
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user: data.user, signIn }}>
+        <AuthContext.Provider value={{ user: data.user, signIn, signOut }}>
             {children}
         </AuthContext.Provider>
     );

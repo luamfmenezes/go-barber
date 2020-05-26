@@ -151,7 +151,7 @@ FNDA:1,ListProviderMounthsAvailability
 FNDA:1,(anonymous_19)
 FNDA:31,(anonymous_22)
 FNDA:31,(anonymous_23)
-FNDA:372,(anonymous_24)
+FNDA:341,(anonymous_24)
 DA:1,1
 DA:4,1
 DA:20,1
@@ -167,7 +167,7 @@ DA:43,31
 DA:46,1
 DA:47,31
 DA:49,31
-DA:51,372
+DA:51,341
 DA:55,31
 DA:63,1
 DA:65,1
@@ -176,7 +176,7 @@ LF:20
 LH:20
 BRDA:31,0,0,1
 BRDA:58,1,0,31
-BRDA:58,1,1,23
+BRDA:58,1,1,22
 BRF:3
 BRH:3
 end_of_record
