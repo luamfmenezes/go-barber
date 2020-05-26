@@ -1,6 +1,17 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
 import background from '../../assets/images/sign-in-background.png';
+
+const fadeFromLeft = keyframes`
+    from{
+        opacity:0;
+        transform:translate(-70px);
+    }
+    to{
+        opacity:1;
+        transform:translate(0px);
+    }
+`;
 
 export const Container = styled.div`
     height: 100vh;
@@ -11,11 +22,17 @@ export const Container = styled.div`
 export const Content = styled.div`
     display: flex;
     flex-direction: column;
-    place-content: center;
+    justify-content: center;
     align-items: center;
     width: 100%;
     max-width: 700px;
+`;
 
+export const AnimatedContent = styled.div`
+    display: flex;
+    flex-direction: column;
+    place-content: center;
+    animation: ${fadeFromLeft} 1s both;
     form {
         margin: 80px 0;
         width: 340px;

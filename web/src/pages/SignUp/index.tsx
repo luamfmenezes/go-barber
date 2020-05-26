@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from 'react';
-import { Container, Content, Background } from './styles';
+import { Container, Content, AnimatedContent, Background } from './styles';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { FiArrowLeft, FiMail, FiUser, FiLock } from 'react-icons/fi';
 import logo from '../../assets/images/logo.svg';
 import * as Yup from 'yup';
 import formatValidationErros from '../../utils/formatValidationErrors';
+import { Link } from 'react-router-dom';
 
 interface IUser {
     email?: string;
@@ -58,40 +59,46 @@ const SignUp: React.FC = () => {
         <Container>
             <Background />
             <Content>
-                <img src={logo} alt="GoBarber" />
-                <form onSubmit={handleSubmit}>
-                    <h1>Sign Up</h1>
-                    <Input
-                        value={user.email}
-                        error={errorsUser.email}
-                        onChange={(event) => handleInputUser(event, 'email')}
-                        icon={FiMail}
-                        name="email"
-                        placeholder="Email"
-                    />
-                    <Input
-                        value={user.name}
-                        error={errorsUser.name}
-                        onChange={(event) => handleInputUser(event, 'name')}
-                        icon={FiUser}
-                        name="name"
-                        placeholder="username"
-                    />
-                    <Input
-                        value={user.password}
-                        error={errorsUser.password}
-                        onChange={(event) => handleInputUser(event, 'password')}
-                        icon={FiLock}
-                        name="password"
-                        type="password"
-                        placeholder="Password"
-                    />
-                    <Button type="submit">Register</Button>
-                </form>
-                <a href="forgot">
-                    <FiArrowLeft size={16} color="#f4ede8" />
-                    Back to Login
-                </a>
+                <AnimatedContent>
+                    <img src={logo} alt="GoBarber" />
+                    <form onSubmit={handleSubmit}>
+                        <h1>Sign Up</h1>
+                        <Input
+                            value={user.email}
+                            error={errorsUser.email}
+                            onChange={(event) =>
+                                handleInputUser(event, 'email')
+                            }
+                            icon={FiMail}
+                            name="email"
+                            placeholder="Email"
+                        />
+                        <Input
+                            value={user.name}
+                            error={errorsUser.name}
+                            onChange={(event) => handleInputUser(event, 'name')}
+                            icon={FiUser}
+                            name="name"
+                            placeholder="username"
+                        />
+                        <Input
+                            value={user.password}
+                            error={errorsUser.password}
+                            onChange={(event) =>
+                                handleInputUser(event, 'password')
+                            }
+                            icon={FiLock}
+                            name="password"
+                            type="password"
+                            placeholder="Password"
+                        />
+                        <Button type="submit">Register</Button>
+                    </form>
+                    <Link to="/">
+                        <FiArrowLeft size={16} color="#f4ede8" />
+                        Back to Login
+                    </Link>
+                </AnimatedContent>
             </Content>
         </Container>
     );

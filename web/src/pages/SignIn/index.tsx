@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Container, Content, Background } from './styles';
+import { Container, Content, AnimatedContent, Background } from './styles';
 import logo from '../../assets/images/logo.svg';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -8,6 +8,7 @@ import * as Yup from 'yup';
 import { useAuth } from '../../hooks/Auth';
 import formatValidationErros from '../../utils/formatValidationErrors';
 import { useToast } from '../../hooks/Toast';
+import { Link } from 'react-router-dom';
 
 interface ICredentials {
     email: string;
@@ -73,37 +74,39 @@ const SignIn: React.FC = () => {
     return (
         <Container>
             <Content>
-                <img src={logo} alt="GoBarber" />
-                <form onSubmit={handleSubmit}>
-                    <h1>Login</h1>
-                    <Input
-                        icon={FiMail}
-                        name="email"
-                        placeholder="Email"
-                        error={errorFields?.email}
-                        value={credentials.email}
-                        onChange={(event) =>
-                            handleInputCredentials(event, 'email')
-                        }
-                    />
-                    <Input
-                        icon={FiLock}
-                        value={credentials.password}
-                        error={errorFields?.password}
-                        onChange={(event) =>
-                            handleInputCredentials(event, 'password')
-                        }
-                        name="password"
-                        type="password"
-                        placeholder="Password"
-                    />
-                    <Button type="submit">SignIn</Button>
-                    <a href="forgot">Forgot password</a>
-                </form>
-                <a href="forgot">
-                    <FiLogIn size={16} color="#ff9000" />
-                    Register for free
-                </a>
+                <AnimatedContent>
+                    <img src={logo} alt="GoBarber" />
+                    <form onSubmit={handleSubmit}>
+                        <h1>Login</h1>
+                        <Input
+                            icon={FiMail}
+                            name="email"
+                            placeholder="Email"
+                            error={errorFields?.email}
+                            value={credentials.email}
+                            onChange={(event) =>
+                                handleInputCredentials(event, 'email')
+                            }
+                        />
+                        <Input
+                            icon={FiLock}
+                            value={credentials.password}
+                            error={errorFields?.password}
+                            onChange={(event) =>
+                                handleInputCredentials(event, 'password')
+                            }
+                            name="password"
+                            type="password"
+                            placeholder="Password"
+                        />
+                        <Button type="submit">SignIn</Button>
+                        <Link to="/forgot">Forgot password</Link>
+                    </form>
+                    <Link to="/signup">
+                        <FiLogIn size={16} color="#ff9000" />
+                        Register for free
+                    </Link>
+                </AnimatedContent>
             </Content>
             <Background />
         </Container>
