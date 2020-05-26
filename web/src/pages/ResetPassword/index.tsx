@@ -1,34 +1,46 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Container, Content, AnimatedContent, Background } from './styles';
 import logo from '../../assets/images/logo.svg';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
-import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
+import { FiLogIn, FiLock } from 'react-icons/fi';
 import * as Yup from 'yup';
-import { useAuth } from '../../hooks/Auth';
 import formatValidationErros from '../../utils/formatValidationErrors';
 import { useToast } from '../../hooks/Toast';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
+import api from '../../services/api';
+import { QueryToJson } from '../../utils/convertQueryJSON';
 
 interface ICredentials {
-    email: string;
+    password_confirmation: string;
     password: string;
 }
 
 interface ICredentialError {
-    email?: string;
+    password_confirmation?: string;
     password?: string;
 }
 
-const SignIn: React.FC = () => {
-    const { signIn } = useAuth();
+const ResetPassword: React.FC = () => {
     const { addToast } = useToast();
+    const { search } = useLocation();
     const [loading, setLoading] = useState(false);
+    const history = useHistory();
     const [credentials, setCredentials] = useState<ICredentials>({
-        email: '',
+        password_confirmation: '',
         password: '',
     });
     const [errorFields, setErrorFields] = useState<ICredentialError>({});
+
+    const [passwrodsMatche, setPasswordMatches] = useState('');
+
+    useEffect(() => {
+        if (credentials.password === credentials.password_confirmation) {
+            setPasswordMatches('');
+        } else {
+            setPasswordMatches('The passwords dont match');
+        }
+    }, [credentials]);
 
     const handleInputCredentials = useCallback(
         (event, fieldName) => {
@@ -43,10 +55,14 @@ const SignIn: React.FC = () => {
             setErrorFields({});
             try {
                 const schemaCredentitials = Yup.object().shape({
-                    email: Yup.string()
-                        .email('Email inválid')
-                        .required('Email is required'),
-                    password: Yup.string().required('Password is required'),
+                    password: Yup.string().min(
+                        6,
+                        'New password must be a least 6 caracters',
+                    ),
+                    password_confirmation: Yup.string().oneOf(
+                        [Yup.ref('password')],
+                        'The passwords must match',
+                    ),
                 });
 
                 await schemaCredentitials.validate(credentials, {
@@ -55,7 +71,21 @@ const SignIn: React.FC = () => {
 
                 setLoading(true);
 
-                await signIn(credentials);
+                const { token } = QueryToJson(search);
+
+                if (!token) {
+                    throw new Error();
+                }
+
+                await api.post('/password/reset', { ...credentials, token });
+
+                addToast({
+                    type: 'success',
+                    description: 'Your password was reseted with success.',
+                    title: 'Password reseted',
+                });
+
+                history.push('/');
             } catch (err) {
                 if (err instanceof Yup.ValidationError) {
                     const errors = formatValidationErros(err);
@@ -63,8 +93,8 @@ const SignIn: React.FC = () => {
                 } else {
                     addToast({
                         type: 'error',
-                        description: 'Invalid credentials',
-                        title: 'Login Error',
+                        description: 'Was impossible to reset your password.',
+                        title: 'Reset password error',
                     });
                 }
             } finally {
@@ -80,17 +110,7 @@ const SignIn: React.FC = () => {
                 <AnimatedContent>
                     <img src={logo} alt="GoBarber" />
                     <form onSubmit={handleSubmit}>
-                        <h1>Login</h1>
-                        <Input
-                            icon={FiMail}
-                            name="email"
-                            placeholder="Email"
-                            error={errorFields?.email}
-                            value={credentials.email}
-                            onChange={(event) =>
-                                handleInputCredentials(event, 'email')
-                            }
-                        />
+                        <h1>Reset Password</h1>
                         <Input
                             icon={FiLock}
                             value={credentials.password}
@@ -100,16 +120,29 @@ const SignIn: React.FC = () => {
                             }
                             name="password"
                             type="password"
-                            placeholder="Password"
+                            placeholder="New password"
+                        />
+                        <Input
+                            icon={FiLock}
+                            value={credentials.password_confirmation}
+                            error={passwrodsMatche}
+                            onChange={(event) =>
+                                handleInputCredentials(
+                                    event,
+                                    'password_confirmation',
+                                )
+                            }
+                            name="password"
+                            type="password"
+                            placeholder="Confirm password"
                         />
                         <Button loading={loading} type="submit">
-                            SignIn
+                            Reset
                         </Button>
-                        <Link to="/forgot-password">Forgot password</Link>
                     </form>
-                    <Link to="/signup">
+                    <Link to="/signin">
                         <FiLogIn size={16} color="#ff9000" />
-                        Register for free
+                        Back to Login
                     </Link>
                 </AnimatedContent>
             </Content>
@@ -118,4 +151,4 @@ const SignIn: React.FC = () => {
     );
 };
 
-export default SignIn;
+export default ResetPassword;

@@ -1,12 +1,17 @@
 import React, { useState, useCallback } from 'react';
 import { Container, Content, AnimatedContent, Background } from './styles';
-import Button from '../../components/Button';
-import Input from '../../components/Input';
 import { FiArrowLeft, FiMail, FiUser, FiLock } from 'react-icons/fi';
 import logo from '../../assets/images/logo.svg';
 import * as Yup from 'yup';
 import formatValidationErros from '../../utils/formatValidationErrors';
 import { Link } from 'react-router-dom';
+import api from '../../services/api';
+
+import { useHistory } from 'react-router-dom';
+import { useToast } from '../../hooks/Toast';
+
+import Button from '../../components/Button';
+import Input from '../../components/Input';
 
 interface IUser {
     email?: string;
@@ -15,6 +20,9 @@ interface IUser {
 }
 
 const SignUp: React.FC = () => {
+    const { addToast } = useToast();
+    const history = useHistory();
+    const [loading, setLoading] = useState(false);
     const [user, setUser] = useState<IUser>({
         email: '',
         password: '',
@@ -37,12 +45,34 @@ const SignUp: React.FC = () => {
                     ),
                 });
 
+                setLoading(true);
+
                 await schemaUser.validate(user, {
                     abortEarly: false,
                 });
+
+                await api.post('/users', user);
+
+                addToast({
+                    type: 'success',
+                    description: 'Your account was registered with sucess ♥',
+                    title: 'Welcome to GoBarber',
+                });
+
+                history.push('/');
             } catch (err) {
-                const errors = formatValidationErros(err);
-                setErrorsUser(errors);
+                if (err instanceof Yup.ValidationError) {
+                    const errors = formatValidationErros(err);
+                    setErrorsUser(errors);
+                } else {
+                    addToast({
+                        type: 'error',
+                        description: 'Was impossible to register.',
+                        title: 'Register Error',
+                    });
+                }
+            } finally {
+                setLoading(false);
             }
         },
         [user, errorsUser],

@@ -32,6 +32,7 @@ export class CreateUsers1489577192819 implements MigrationInterface {
                     {
                         name: 'phone',
                         type: 'varchar',
+                        isNullable: true,
                     },
                     {
                         name: 'created_at',

@@ -21,6 +21,14 @@ export const Container = styled.div<ICotainerProps>`
         margin-top: 8px;
     }
 
+
+    ${(props) =>
+        props.isFilled &&
+        css`
+            color: #ff9000;
+        `}
+
+
     ${(props) =>
         props.hadError &&
         css`
@@ -33,12 +41,6 @@ export const Container = styled.div<ICotainerProps>`
         css`
             color: #ff9000;
             border-color: #ff9000;
-        `}
-
-    ${(props) =>
-        props.isFilled &&
-        css`
-            color: #ff9000;
         `}
 
     input {

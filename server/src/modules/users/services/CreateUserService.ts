@@ -10,7 +10,7 @@ interface Request {
     name: string;
     email: string;
     password: string;
-    phone: string;
+    phone?: string;
 }
 
 @injectable()

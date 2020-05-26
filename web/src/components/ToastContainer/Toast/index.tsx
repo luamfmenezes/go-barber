@@ -77,7 +77,7 @@ const ToastContainer: React.FC<IToastProps> = ({ toast, style }) => {
     return (
         <Container
             key={id}
-            hasDescription={!!description}
+            hasDescription={description ? 'true' : 'false'}
             type={type}
             style={style}
             onMouseOver={onFocusHandle}
