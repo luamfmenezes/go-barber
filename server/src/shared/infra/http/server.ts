@@ -9,6 +9,7 @@ import bodyParser from 'body-parser';
 import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
 import raterLimiter from '@shared/infra/http/middlewares/rateLimiter';
+import path from 'path';
 
 import '@shared/infra/typeorm';
 import '@shared/container';
@@ -21,7 +22,17 @@ app.use(raterLimiter);
 
 app.use(bodyParser.json());
 
-app.use('/files', express.static(uploadConfig.directory));
+// rewrite luam
+const filesFolder = path.resolve(
+    __dirname,
+    '../',
+    '../',
+    '../',
+    '../',
+    'tmp',
+    'uploads',
+);
+app.use('/files', express.static(filesFolder));
 
 app.use(routes);
 

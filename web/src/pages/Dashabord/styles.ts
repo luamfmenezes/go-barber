@@ -1,5 +1,16 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { shade } from 'polished';
+
+const fadeIn = keyframes`
+    from{
+        opacity:0;
+        transform: translateX(-50px);
+    }
+    to{
+        opacity:1;
+        transform: translateX(0px);
+    }
+`;
 
 export const Container = styled.div``;
 export const Header = styled.div`
@@ -68,6 +79,7 @@ export const Content = styled.main`
 
 export const Schedule = styled.div`
     flex: 1;
+    animation: 0.5s ${fadeIn} 0s both;
     h1 {
         font-size: 36px;
     }
@@ -112,9 +124,10 @@ export const NextAppointment = styled.div`
         &::before {
             content: '';
             position: absolute;
-            width: 1px;
+            width: 2px;
             height: 80%;
             left: 0;
+            border-radius: 1px;
             top: 10%;
             background: #ff9000;
             margin: 0 8px;
@@ -252,4 +265,10 @@ export const Calendar = styled.aside`
         border-radius: 10px;
         color: #232129 !important;
     }
+`;
+
+export const ClearSchedule = styled.p`
+    color: #666360 !important;
+    width: 100%;
+    opacity: 0.6;
 `;

@@ -1,6 +1,9 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import 'react-day-picker/lib/style.css';
 import DayPicker, { DayModifiers } from 'react-day-picker';
+import { isToday, parseISO, format, isAfter } from 'date-fns';
+import Loading from '../../components/Loading';
+
 import {
     Container,
     Header,
@@ -10,6 +13,7 @@ import {
     Schedule,
     NextAppointment,
     Section,
+    ClearSchedule,
     Appointment,
     Calendar,
 } from './styles';
@@ -25,9 +29,20 @@ interface IMonthAvailabilityItem {
     available: boolean;
 }
 
+interface IAppointment {
+    id: string;
+    date: string;
+    user: {
+        name: string;
+        avatar_url: string;
+    };
+}
+
 const Dashboard: React.FC = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currentMonth, setCurrentMonth] = useState(new Date());
+    const [appointments, setAppointments] = useState<IAppointment[]>([]);
+    const [loadingAppointments, setLoadingAppointments] = useState(true);
     const [monthAvailability, setMonthAvailabiliry] = useState<
         IMonthAvailabilityItem[]
     >([]);
@@ -49,6 +64,23 @@ const Dashboard: React.FC = () => {
         getMonthAvailability();
     }, [currentMonth, user.id]);
 
+    useEffect(() => {
+        async function getAppointments() {
+            setLoadingAppointments(true);
+
+            const response = await api.get('appointments/me', {
+                params: {
+                    year: selectedDate.getFullYear(),
+                    month: selectedDate.getMonth() + 1,
+                    day: selectedDate.getDate(),
+                },
+            });
+            setAppointments(response.data);
+            setLoadingAppointments(false);
+        }
+        getAppointments();
+    }, [selectedDate, user.id]);
+
     const handleDateChange = useCallback(
         (day: Date, modifiers: DayModifiers) => {
             if (modifiers.available) {
@@ -65,6 +97,18 @@ const Dashboard: React.FC = () => {
         [setCurrentMonth],
     );
 
+    const morningAppointments = useMemo<IAppointment[]>(() => {
+        return appointments.filter(
+            (appointment) => parseISO(appointment.date).getHours() < 12,
+        );
+    }, [appointments]);
+
+    const afternoonAppointments = useMemo<IAppointment[]>(() => {
+        return appointments.filter(
+            (appointment) => parseISO(appointment.date).getHours() >= 12,
+        );
+    }, [appointments]);
+
     const disableDays = useMemo(() => {
         const dates = monthAvailability
             .filter((monthDay) => monthDay.available === false)
@@ -75,6 +119,20 @@ const Dashboard: React.FC = () => {
             });
         return dates;
     }, [currentMonth, monthAvailability]);
+
+    const selectedDateAsText = useMemo(() => {
+        return format(selectedDate, `d'th' MMMM`);
+    }, [selectedDate]);
+
+    const selectedWeekDay = useMemo(() => {
+        return format(selectedDate, 'cccc');
+    }, [selectedDate]);
+
+    const nextAppointment = useMemo(() => {
+        return appointments.find((appointment) =>
+            isAfter(parseISO(appointment.date), new Date()),
+        );
+    }, [appointments]);
 
     return (
         <Container>
@@ -97,62 +155,98 @@ const Dashboard: React.FC = () => {
                 </HeaderContent>
             </Header>
             <Content>
-                <Schedule>
-                    <h1>Schedules times</h1>
-                    <p>
-                        <span>Hoje</span>
-                        <span>Dia 06</span>
-                        <span>Segunda-feira</span>
-                    </p>
-
-                    <NextAppointment>
-                        <strong>Next appointment</strong>
-                        <div>
-                            <img src={noAvatar} alt="luamemenezes" />
-                            <strong>Luam Menezes</strong>
-                            <span>
-                                <FiClock />
-                                11:00
-                            </span>
-                        </div>
-                    </NextAppointment>
-                    <Section>
-                        <strong>Mornig</strong>
-                        <Appointment>
-                            <span>
-                                <FiClock />
-                                11:00
-                            </span>
-                            <div>
-                                <img src={noAvatar} alt="luamemenezes" />
-                                <strong>Luam Menezes</strong>
-                            </div>
-                        </Appointment>
-                        <Appointment>
-                            <span>
-                                <FiClock />
-                                11:00
-                            </span>
-                            <div>
-                                <img src={noAvatar} alt="luamemenezes" />
-                                <strong>Luam Menezes</strong>
-                            </div>
-                        </Appointment>
-                    </Section>
-                    <Section>
-                        <strong>Afternoon</strong>
-                        <Appointment>
-                            <span>
-                                <FiClock />
-                                11:00
-                            </span>
-                            <div>
-                                <img src={noAvatar} alt="luamemenezes" />
-                                <strong>Luam Menezes</strong>
-                            </div>
-                        </Appointment>
-                    </Section>
-                </Schedule>
+                {loadingAppointments ? (
+                    <Loading />
+                ) : (
+                    <Schedule>
+                        <h1>Schedules times</h1>
+                        <p>
+                            {isToday(selectedDate) && <span>Today</span>}
+                            <span>{selectedDateAsText}</span>
+                            <span>{selectedWeekDay}</span>
+                        </p>
+                        {isToday(selectedDate) && nextAppointment && (
+                            <NextAppointment>
+                                <strong>Next appointment</strong>
+                                <div>
+                                    <img
+                                        src={
+                                            nextAppointment.user.avatar_url ||
+                                            noAvatar
+                                        }
+                                        alt="luamemenezes"
+                                    />
+                                    <strong>{nextAppointment.user.name}</strong>
+                                    <span>
+                                        <FiClock />
+                                        {format(
+                                            parseISO(nextAppointment.date),
+                                            'hh:mm a',
+                                        )}
+                                    </span>
+                                </div>
+                            </NextAppointment>
+                        )}
+                        <Section>
+                            <strong>Mornig</strong>
+                            {morningAppointments.map((appointment) => (
+                                <Appointment key={appointment.id}>
+                                    <span>
+                                        <FiClock />
+                                        {format(
+                                            new Date(appointment.date),
+                                            'hh:mm a',
+                                        )}
+                                    </span>
+                                    <div>
+                                        <img
+                                            src={
+                                                appointment.user.avatar_url ||
+                                                noAvatar
+                                            }
+                                            alt="luamemenezes"
+                                        />
+                                        <strong>{appointment.user.name}</strong>
+                                    </div>
+                                </Appointment>
+                            ))}
+                            {morningAppointments.length === 0 && (
+                                <ClearSchedule>
+                                    You schedule is clear by the morning
+                                </ClearSchedule>
+                            )}
+                        </Section>
+                        <Section>
+                            <strong>Afternoon</strong>
+                            {afternoonAppointments.map((appointment) => (
+                                <Appointment key={appointment.id}>
+                                    <span>
+                                        <FiClock />
+                                        {format(
+                                            new Date(appointment.date),
+                                            'hh:mm a',
+                                        )}
+                                    </span>
+                                    <div>
+                                        <img
+                                            src={
+                                                appointment.user.avatar_url ||
+                                                noAvatar
+                                            }
+                                            alt="luamemenezes"
+                                        />
+                                        <strong>{appointment.user.name}</strong>
+                                    </div>
+                                </Appointment>
+                            ))}
+                            {afternoonAppointments.length === 0 && (
+                                <ClearSchedule>
+                                    You schedule is clear by the afternoon
+                                </ClearSchedule>
+                            )}
+                        </Section>
+                    </Schedule>
+                )}
                 <Calendar>
                     <DayPicker
                         fromMonth={new Date()}
