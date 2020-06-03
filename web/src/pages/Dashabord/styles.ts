@@ -12,8 +12,20 @@ const fadeIn = keyframes`
     }
 `;
 
+const growHeader = keyframes`
+    from{
+        transform: translateY(-50px);
+        opacity:0;
+    }
+    to{
+        transform: translateY(0px);
+        opacity:1;
+    }
+`;
+
 export const Container = styled.div``;
 export const Header = styled.div`
+    animation: 0.5s ${growHeader} 0s both;
     padding: 32px 0;
     background: #28262e;
 `;
@@ -61,12 +73,17 @@ export const Profile = styled.div`
         margin-left: 16px;
         line-height: 24px;
 
-        span {
-            color: #f4ede8;
+        a {
+            text-decoration: none;
+            color: #ff9000;
+            transition: opacity 0.2s;
+            &:hover {
+                opacity: 0.8;
+            }
         }
 
-        strong {
-            color: #ff9000;
+        span {
+            color: #f4ede8;
         }
     }
 `;

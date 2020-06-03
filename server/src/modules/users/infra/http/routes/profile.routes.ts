@@ -16,9 +16,10 @@ profileRoutes.put(
         [Segments.BODY]: Joi.object().keys({
             email: Joi.string().email().required(),
             name: Joi.string().required(),
-            phone: Joi.string().required(),
+            phone: Joi.string(),
             old_password: Joi.string(),
             password: Joi.string(),
+            password_confirmation: Joi.string(),
         }),
     }),
     profileController.update,
