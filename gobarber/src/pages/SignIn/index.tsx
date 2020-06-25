@@ -9,13 +9,15 @@ import {
 import * as Yup from 'yup';
 import {Form} from '@unform/mobile';
 import {FormHandles} from '@unform/core';
-
 import Icon from 'react-native-vector-icons/Feather';
 import logo from '../../assets/logo.png';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
+import {useNavigation} from '@react-navigation/native';
 
 import getValidationErrors from '../../utils/formatValidationErrors';
+
+import {useAuth} from '../../hooks/Auth';
 
 import {
     Container,
@@ -37,17 +39,14 @@ interface IUser {
 const SignIn: React.FC = () => {
     const formRef = useRef<FormHandles>(null);
     const passwordInputRef = useRef<InputFocusRef>(null);
+    const navigation = useNavigation();
 
-    const [user, setUser] = useState<IUser>({
-        email: '',
-        password: '',
-    });
+    const {signIn, user} = useAuth();
 
     const handleSubmit = useCallback(
         async (data: Object) => {
             formRef.current?.setErrors({});
             try {
-                console.log(data);
                 const schema = Yup.object().shape({
                     email: Yup.string()
                         .email('Email should be valid')
@@ -59,19 +58,16 @@ const SignIn: React.FC = () => {
                     abortEarly: false,
                 });
 
-                console.log('in');
-
-                // signIn usign Hooks
+                await signIn(data as IUser);
             } catch (err) {
                 if (err instanceof Yup.ValidationError) {
                     const errors = getValidationErrors(err);
-                    console.log(errors);
                     formRef.current?.setErrors(errors);
                     return;
                 }
             }
         },
-        [formRef],
+        [SignIn],
     );
 
     return (
@@ -95,6 +91,8 @@ const SignIn: React.FC = () => {
                                 icon="mail"
                                 placeholder="Your email"
                                 returnKeyType="next"
+                                keyboardType="email-address"
+                                autoCapitalize="none"
                                 onSubmitEditing={() =>
                                     passwordInputRef.current?.focus()
                                 }
@@ -104,6 +102,11 @@ const SignIn: React.FC = () => {
                                 name="password"
                                 icon="lock"
                                 placeholder="Your password"
+                                returnKeyType="send"
+                                secureTextEntry
+                                onSubmitEditing={() =>
+                                    formRef.current?.submitForm()
+                                }
                             />
                             <Button
                                 onPress={() => formRef.current?.submitForm()}>
@@ -118,7 +121,7 @@ const SignIn: React.FC = () => {
                     </Container>
                 </ScrollView>
             </KeyboardAvoidingView>
-            <CreateAccountButton>
+            <CreateAccountButton onPress={() => navigation.navigate('SignUp')}>
                 <Icon name="log-in" size={20} color="#ff9000" />
                 <CreateAccountButtonText>SignUp</CreateAccountButtonText>
             </CreateAccountButton>

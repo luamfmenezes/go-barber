@@ -2,11 +2,11 @@
     {
         "name": "default",
         "type": "postgres",
-        "host": "172.18.88.81",
-        "port": "5454",
+        "host": "172.24.208.1",
+        "port": "5432",
         "username": "postgres",
         "password": "981145279",
-        "database": "tickets",
+        "database": "gobarber",
         "entities": ["./src/modules/**/infra/typeorm/entities/*.ts"],
         "migrations": ["./src/shared/infra/typeorm/migrations/*.ts"],
         "cli": {
@@ -16,7 +16,7 @@
     {
         "name": "mongo",
         "type": "mongodb",
-        "host": "172.18.88.81",
+        "host": "172.24.208.1",
         "port": "27017",
         "database": "gobarber",
         "useUnifiedTopology": true,

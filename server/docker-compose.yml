@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+    gobarber-mongo:
+        container_name: gobarber-mongo
+        image: 'mongo'
+        restart: unless-stopped
+        volumes:
+            - mongo-gobarber-data:/data
+        ports:
+            - '27017:27017'
+    gobarber-postgres:
+        container_name: gobarber-postgres
+        image: postgres:11
+        restart: unless-stopped
+        volumes:
+            - postgres-gobarber-data:/data
+        ports:
+            - '5432:5432'
+        environment:
+            POSTGRES_DB: 'gobarber'
+            POSTGRES_USER: 'postgres'
+            POSTGRES_PASSWORD: '981145279'
+    gobarber-redis:
+        container_name: gobarber-redis
+        image: redis:alpine
+        restart: unless-stopped
+        ports:
+            - '6379:6379'
+        volumes:
+            - redis-gobarber-data:/data
+volumes:
+    postgres-gobarber-data:
+    mongo-gobarber-data:
+    redis-gobarber-data:
