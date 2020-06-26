@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
-import {View} from 'react-native';
+import {ActivityIndicator} from 'react-native';
 
 import {
     Container,
@@ -25,14 +25,16 @@ import {IProvider} from './types';
 import Icon from 'react-native-vector-icons/Feather';
 
 const Dashboard: React.FC = () => {
+    const [loading, setLoading] = useState(false);
     const [providers, setProviders] = useState<IProvider[]>([]);
-    const {user, signOut} = useAuth();
+    const {user} = useAuth();
     const {navigate} = useNavigation();
 
     useEffect(() => {
         const getProviders = async () => {
             const response = await api.get('/providers');
             setProviders(response.data);
+            setLoading(false);
         };
         getProviders();
     }, []);
@@ -51,7 +53,7 @@ const Dashboard: React.FC = () => {
                     Bem vindo, {'\n'}
                     <UserName>{user.name}</UserName>
                 </HeaderTitle>
-                <ProfileButton onPress={() => signOut()}>
+                <ProfileButton onPress={() => navigate('Profile')}>
                     <ProfileImage
                         source={{
                             uri:
@@ -61,46 +63,54 @@ const Dashboard: React.FC = () => {
                     />
                 </ProfileButton>
             </Header>
-            <ProvidersList
-                data={providers}
-                keyExtractor={(provider) => provider.id}
-                ListHeaderComponent={
-                    <ProviderListTitle>Barbers</ProviderListTitle>
-                }
-                renderItem={({item: provider}) => (
-                    <ProviderContainer
-                        onPress={() =>
-                            navigateToCreateAppointment(provider.id)
-                        }>
-                        <ProviderAvatar
-                            source={{
-                                uri:
-                                    provider.avatar_url ||
-                                    `https://api.adorable.io/avatars/285/${provider.email}`,
-                            }}
-                        />
-                        <ProviderInfo>
-                            <ProviderName>{provider.name}</ProviderName>
-                            <ProviderMeta>
-                                <Icon
-                                    name="calendar"
-                                    size={14}
-                                    color="#ff9700"
-                                />
-                                <ProviderMetaText>
-                                    Monday to Friday
-                                </ProviderMetaText>
-                            </ProviderMeta>
-                            <ProviderMeta>
-                                <Icon name="clock" size={14} color="#ff9700" />
-                                <ProviderMetaText>
-                                    8am until 16pm
-                                </ProviderMetaText>
-                            </ProviderMeta>
-                        </ProviderInfo>
-                    </ProviderContainer>
-                )}
-            />
+            {loading ? (
+                <ActivityIndicator size="large" color="#ff9700" />
+            ) : (
+                <ProvidersList
+                    data={providers}
+                    keyExtractor={(provider) => provider.id}
+                    ListHeaderComponent={
+                        <ProviderListTitle>Barbers</ProviderListTitle>
+                    }
+                    renderItem={({item: provider}) => (
+                        <ProviderContainer
+                            onPress={() =>
+                                navigateToCreateAppointment(provider.id)
+                            }>
+                            <ProviderAvatar
+                                source={{
+                                    uri:
+                                        provider.avatar_url ||
+                                        `https://api.adorable.io/avatars/285/${provider.email}`,
+                                }}
+                            />
+                            <ProviderInfo>
+                                <ProviderName>{provider.name}</ProviderName>
+                                <ProviderMeta>
+                                    <Icon
+                                        name="calendar"
+                                        size={14}
+                                        color="#ff9700"
+                                    />
+                                    <ProviderMetaText>
+                                        Monday to Friday
+                                    </ProviderMetaText>
+                                </ProviderMeta>
+                                <ProviderMeta>
+                                    <Icon
+                                        name="clock"
+                                        size={14}
+                                        color="#ff9700"
+                                    />
+                                    <ProviderMetaText>
+                                        8am until 16pm
+                                    </ProviderMetaText>
+                                </ProviderMeta>
+                            </ProviderInfo>
+                        </ProviderContainer>
+                    )}
+                />
+            )}
         </Container>
     );
 };

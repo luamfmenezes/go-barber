@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import api from '../services/api';
+import {Alert} from 'react-native';
 
 interface User {
     id: string;
@@ -55,17 +56,21 @@ const AuthProvider: React.FC = ({children}) => {
     }, []);
 
     const signIn = useCallback(async ({email, password}) => {
-        const response = await api.post('sessions', {email, password});
-        const {token, user} = response.data;
+        try {
+            const response = await api.post('sessions', {email, password});
+            const {token, user} = response.data;
 
-        await AsyncStorage.multiSet([
-            ['@GoBarber:token', token],
-            ['@GoBarber:user', JSON.stringify(user)],
-        ]);
+            await AsyncStorage.multiSet([
+                ['@GoBarber:token', token],
+                ['@GoBarber:user', JSON.stringify(user)],
+            ]);
 
-        api.defaults.headers.authorization = `bearer ${token}`;
+            api.defaults.headers.authorization = `bearer ${token}`;
 
-        setData({token, user});
+            setData({token, user});
+        } catch {
+            Alert.alert('Erro', 'Your cretials are invalids, please try again');
+        }
     }, []);
 
     const signOut = useCallback(async () => {
