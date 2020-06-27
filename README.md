@@ -1,4 +1,4 @@
-### GoBarber :tw-1f488:
+### GoBarber 💈💈
 
 ---
 
