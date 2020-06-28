@@ -25,4 +25,33 @@ describe('Input Componnent', () => {
             expect(containerInput).toHaveStyle('color:#ff9000');
         });
     });
+    it('should render highlight-off when input is blured', async () => {
+        const { getByPlaceholderText, getByTestId } = render(
+            <Input name="email" placeholder="TestPlaceHolder" />,
+        );
+
+        const containerInput = getByTestId('input-container');
+
+        await wait(() => {
+            expect(containerInput).not.toHaveStyle('border-color:#ff9000');
+            expect(containerInput).not.toHaveStyle('color:#ff9000');
+        });
+    });
+    it('should render highlight-red and tooltip on input when error is true', async () => {
+        const { getByPlaceholderText, getByTestId } = render(
+            <Input
+                name="email"
+                placeholder="TestPlaceHolder"
+                error="Error test"
+            />,
+        );
+
+        const containerInput = getByTestId('input-container');
+        const toolTipContainer = getByTestId('tool-tip-container');
+
+        await wait(() => {
+            expect(containerInput).toHaveStyle('color:#c53030');
+            expect(toolTipContainer).toBeTruthy();
+        });
+    });
 });

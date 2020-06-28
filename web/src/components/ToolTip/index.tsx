@@ -12,9 +12,14 @@ interface IToolTipProps {
     className?: string;
 }
 
-const Input: React.FC<IToolTipProps> = ({ title, className, children }) => {
+const Input: React.FC<IToolTipProps> = ({
+    title,
+    className,
+    children,
+    ...rest
+}) => {
     return (
-        <Container className={className}>
+        <Container className={className} {...rest}>
             <span>{title}</span>
             {children}
         </Container>

@@ -32,7 +32,7 @@ const Input: React.FC<InputProps> = ({ icon: Icon, error, ...rest }) => {
 
     return (
         <Container
-            data-testId="input-container"
+            data-testid="input-container"
             hadError={!!error}
             isFilled={isFilled}
             isFocused={isFocused}
@@ -45,7 +45,7 @@ const Input: React.FC<InputProps> = ({ icon: Icon, error, ...rest }) => {
                 onBlur={handleOnBlur}
             />
             {error && (
-                <ToolTipStyled title={error}>
+                <ToolTipStyled data-testid="tool-tip-container" title={error}>
                     <FiAlertCircle size={24} />
                 </ToolTipStyled>
             )}
