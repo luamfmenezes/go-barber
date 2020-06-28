@@ -34,10 +34,13 @@ The backend is a Rest API developed in Nodejs with Typescript, using a DDD strcu
 ---
 
 To start the serve is necessary config the .env file.
+
 `yarn dev:server`
 start the server in development mode.
+
 `yarn typeorm migration:run`
 Run the migrations
+
 `yarn test`
 Run the tests
 
@@ -50,9 +53,11 @@ The front end is a React application developed with Typescript, it use styled-co
 ---
 
 To start the serve is necessary config the .env file.
+
 `yarn start`
 Run the application.
-`yarn test`
+
+`yarn test --coverage --watchAll false`
 Run the tests
 
 ## Mobile
@@ -64,7 +69,9 @@ The mobile app was developed using React-Native with Ts.
 ---
 
 To start the serve is necessary config the .env file.
+
 `yarn start`
 Run the application.
-`yarn test`
+
+`yarn test --coverage --watchAll false`
 Run the tests
