@@ -5,7 +5,7 @@
 ![](https://i.ibb.co/nbtdQ9C/logo-3x.png)
 
 Application developted on Rocketseat goStack bootcamp, course about ReactJS, React-Native and Nodejs.
-The application enable to manage the appointments in a barbershop with a web front-end for the barbers control their agenda, and a mobile app to users schedule appointments with the registereds barbers.
+The application allow to manage the appointments in a barbershop with a web front-end for the barbers control their agenda, and a mobile app to users schedule appointments.
 
 ### Features
 
@@ -28,7 +28,7 @@ The application enable to manage the appointments in a barbershop with a web fro
 
 ## Backend
 
-The backend is a Rest API developed in Nodejs with Typescript, using a DDD strcucture, the backend have dependency injection to be possible apply unit tests in the Services. Trogouth the bootcamp it was explored all best pratices listened in SOLID principle.
+The backend is a Rest API developed in Nodejs with Typescript, using a DDD strcucture, the backend have dependency injection to be possible apply unit tests in the Services. Trogouth the bootcamp it was explored all the best pratices listened in SOLID principle.
 
 #### Usuability
 
@@ -48,6 +48,7 @@ Run the tests
 ## Front end
 
 The front end is a React application developed with Typescript, it use styled-components, ContextApi.
+
 
 #### Usuability
 
